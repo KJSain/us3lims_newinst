@@ -10,6 +10,12 @@ session_start();
 include 'config.php';
 include 'db.php';
 
+// db link 
+//$link = mysqli_connect( $dbhost, $dbusername, $dbpasswd ) 
+//	or die(" Could not connect to database server."); 
+//$linkdb = mysqli_select_db( $link, $dbname); 
+
+
 // Start displaying page
 $page_title = 'Request a New LIMS Instance';
 //$js = 'js/request_new_instance.js';
@@ -42,7 +48,7 @@ foreach ( $fields as $field )
 
 // Are we being directed to save the data?
 if ( isset( $_POST['create'] ) )
-  do_create();
+  do_create($link);
 
 // No, so are we being directed to enter the data?
 else if ( isset( $_POST['enter_request'] ) )
@@ -66,7 +72,7 @@ include 'footer.php';
 exit();
 
 // Function to create the new record
-function do_create()
+function do_create(mysqli $link)
 {
   global $org_site;
   include 'get_meta_info.php';
@@ -90,9 +96,9 @@ function do_create()
               . " (only alphanumeric and underscore allowed).<br/>";
   $query  = "SELECT COUNT(*) FROM metadata " .
             "WHERE inst_abbrev = '$inst_abbrev' ";
-  $result =  mysql_query($query)
-             or die("Query failed : $query<br />\n" . mysql_error());
-  list( $count ) = mysql_fetch_array( $result );
+  $result =  mysqli_query($link, $query)
+             or die("Query failed : $query<br />\n" . mysqli_error($link));
+  list( $count ) = mysqli_fetch_array( $result );
   if ( $count > 0 )
     $message .= "--abbreviation $inst_abbrev is already in use.<br />";
 
@@ -133,8 +139,8 @@ function do_create()
              "status = 'pending', " .
              "updateTime = NOW() ";
 
-    mysql_query($query)
-      or die("Query failed : $query<br />\n" . mysql_error());
+    mysqli_query($link, $query)
+      or die("Query failed : $query<br />\n" . mysqli_error($link));
 
     email_admin( $institution );
     show_record();

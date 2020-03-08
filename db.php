@@ -2,10 +2,10 @@
 
 include 'config.php';
 
-$link = mysql_connect( $dbhost, $dbusername, $dbpasswd ) 
-        or die("Could not connect to database server.");
+$link = mysqli_connect( $dbhost, $dbusername, $dbpasswd, $dbname ) 
+        or die( mysqli_query($link));
 
-mysql_select_db($dbname, $link) 
+/*mysqli_select_db($link, $dbname) 
         or die("Could not select database. " .
-               "Please ask your Database Administrator for help.");
+	"Please ask your Database Administrator for help."); */
 ?>

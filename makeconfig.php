@@ -44,10 +44,10 @@ $query  = "SELECT institution, dbuser, dbpasswd, dbhost, " .
           "FROM metadata " .
           "WHERE dbname = '$new_dbname' ";
 
-$result = mysql_query($query) 
-          or die("Query failed : $query<br />\n" . mysql_error());
+$result = mysqli_query($link, $query) 
+          or die("Query failed : $query<br />\n" . mysqli_error($link));
 
-if ( mysql_num_rows( $result ) != 1 )
+if ( mysqli_num_rows( $result ) != 1 )
 {
   echo "$new_dbname not found\n";
   exit();
@@ -63,7 +63,7 @@ list( $institution,
       $admin_lname,
       $admin_email,
       $admin_pw,
-      $lab_contact )   = mysql_fetch_array( $result );
+      $lab_contact )   = mysqli_fetch_array( $result );
 
 $today  = date("Y\/m\/d");
 $year   = date( "Y" );
@@ -78,10 +78,10 @@ $text = <<<TEXT
 
 */
 
-\$org_name           = 'UltraScan3 LIMS portal';
+\$org_name           = '$org_name';
 \$org_site           = '$new_orgsite/$new_dbname';
-\$site_author        = 'Borries Demeler, University of Lethbridge';
-\$site_keywords      = 'ultrascan analytical ultracentrifugation lims';
+\$site_author        = '$site_author';
+\$site_keywords      = '$site_keywords';
                       # The website keywords (meta tag)
 \$site_desc          = 'Website for the UltraScan3 LIMS portal'; # Site description
 
@@ -99,27 +99,27 @@ $text = <<<TEXT
 \$secure_pw          = '$secure_pw';   # the secure password that UltraScan3 uses
 
 // Global DB
-\$globaldbuser       = 'gfac';  # the name of the MySQL user
-\$globaldbpasswd     = 'backend';  # the password for the MySQL user
-\$globaldbname       = 'gfac';  # the name of the database
+\$globaldbuser       = '$globaldbuser';  # the name of the MySQL user
+\$globaldbpasswd     = '$globaldbpasswd';  # the password for the MySQL user
+\$globaldbname       = '$globaldbname';  # the name of the database
 \$globaldbhost       = 'localhost'; # the host on which MySQL runs, generally localhost
 
 // Admin function
 \$v1_host            = "localhost";
 \$v1_user            = "root";
-\$v1_pass            = "";  # password must be set
+\$v1_pass            = "";
 
 \$v2_host            = "localhost";
 \$v2_user            = "lims3_admin";
-\$v2_pass            = "";  # password must be set
+\$v2_pass            = "";
 
 \$ipaddr             = '$new_ipaddress'; # the primary IP address of the host machine
-\$ipa_ext            = '$new_ipaddress'; # the external IP address of the host machine
+\$ipa_ext            = '$ipaddr'; # the external IP address of the host machine
 \$ipad_a             = '10.54.0.1';       # the primary IP address of the host (alamo)
 \$ipae_a             = '10.115.127.212';  # the external IP address of the host (alamo)
-\$udpport            = 12233; # the port to send udp messages to
-\$svcport            = 8080;  # the port for GFAC/Airavata services
-\$uses_thrift        = true;  # flags use of Thrift rather than Gfac
+\$udpport            = $udpport; # the port to send udp messages to
+\$svcport            = $svcport;  # the port for GFAC/Airavata services
+\$uses_thrift        = $uses_thrift;  # flags use of Thrift rather than Gfac
 \$thr_clust_excls    = array( 'bcf' ); # Never uses Thrift
 \$thr_clust_incls    = array( 'alamo' ); # Always uses Thrift
 
@@ -128,13 +128,13 @@ $text = <<<TEXT
 
 \$full_path          = '$dest_path$new_dbname/';  # Location of the system code
 \$data_dir           = '$dest_path$new_dbname/data/'; # Full path
-\$submit_dir         = '/srv/www/htdocs/uslims3/uslims3_data/'; # Full path
-\$class_dir          = '/srv/www/htdocs/common/class/';       # Production class path
+\$submit_dir         = '${dest_path}uslims3/uslims3_data/'; # Full path
+\$class_dir          = '${dest_path}/common/class/';       # Production class path
 //\$class_dir          = '/srv/www/htdocs/common/class_devel/'; # Development class path
 \$disclaimer_file    = ''; # the name of a text file with disclaimer info
 
 // Dates
-date_default_timezone_set( 'America/Chicago' );
+date_default_timezone_set( '${timezone}' );
 \$last_update        = '$today'; # the date the website was last updated
 \$copyright_date     = '$year'; # copyright date
 \$current_year       = date( 'Y' );

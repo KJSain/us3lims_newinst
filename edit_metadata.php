@@ -27,7 +27,7 @@ include 'lib/utility.php';
 
 if (isset($_POST['update']))
 {
-  do_update();
+  do_update($link);
   exit();
 }
 
@@ -43,10 +43,10 @@ if ( isset( $_POST['create'] ) )
             "status " .
             "FROM metadata " .
             "WHERE metadataID = $metadataID ";
-  $result = mysql_query($query) 
-            or die("Query failed : $query<br />\n" . mysql_error());
+  $result = mysqli_query($link, $query) 
+            or die("Query failed : $query<br />\n" . mysqli_error($link));
 
-  $row    = mysql_fetch_array($result, MYSQL_ASSOC);
+  $row    = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
   $message = '';  
   foreach ($row as $key => $value)
@@ -77,7 +77,7 @@ if ( isset($_POST['email_login']) )
   if ( isset( $_POST['metadataID'] ) )
   {
     $metadataID = $_POST['metadataID'];
-    email_login_info( $metadataID );
+    email_login_info( $metadataID, $link );
     $redirect = "?ID=$metadataID";
     $_SESSION['message'] = 'The email has been sent';
   }
@@ -117,13 +117,13 @@ if ( isset( $_SESSION['message'] ) )
 
 // Edit or display a record
 if ( isset($_POST['edit']) || isset($_GET['edit']) )
-  edit_record();
+  edit_record($link);
 
 else if ( isset($_POST['login_info']) )
-  login_info();
+  login_info($link);
 
 else
-  display_record();
+  display_record($link);
 
 ?>
 </div>
@@ -133,7 +133,7 @@ include 'footer.php';
 exit();
 
 // Function to update the current record
-function do_update()
+function do_update(mysqli $link)
 {
   include 'get_meta_info.php';
   $metadataID   =                                     $_POST['metadataID'];
@@ -169,9 +169,9 @@ function do_update()
   $query  = "SELECT COUNT(*) FROM metadata " .
             "WHERE inst_abbrev = '$inst_abbrev' " .
             "AND metadataID != $metadataID ";
-  $result =  mysql_query($query)
-             or die("Query failed : $query<br />\n" . mysql_error());
-  list( $count ) = mysql_fetch_array( $result );
+  $result =  mysqli_query($link, $query)
+             or die("Query failed : $query<br />\n" . mysqli_error($link));
+  list( $count ) = mysqli_fetch_array( $result );
   if ( $count > 0 )
     $message .= "--abbreviation $inst_abbrev is already in use.<br />";
 
@@ -201,8 +201,8 @@ function do_update()
              "updateTime = NOW() " .
              "WHERE metadataID = $metadataID ";
 
-    mysql_query($query)
-      or die("Query failed : $query<br />\n" . mysql_error());
+    mysqli_query($link, $query)
+      or die("Query failed : $query<br />\n" . mysqli_error($link));
 
     header("Location: $_SERVER[PHP_SELF]?ID=$metadataID");
   }
@@ -217,10 +217,10 @@ function do_update()
 }
 
 // Function to display and navigate records
-function display_record()
+function display_record(mysqli $link)
 {
   // Find a record to display
-  $metadataID = get_id();
+  $metadataID = get_id($link);
   if ($metadataID === false)
     return;
 
@@ -231,10 +231,10 @@ function display_record()
             "status " .
             "FROM metadata " .
             "WHERE metadataID = $metadataID ";
-  $result = mysql_query($query) 
-            or die("Query failed : $query<br />\n" . mysql_error());
+  $result = mysqli_query($link, $query) 
+            or die("Query failed : $query<br />\n" . mysqli_error($link));
 
-  $row    = mysql_fetch_array($result, MYSQL_ASSOC);
+  $row    = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
   // Create local variables; make sure IE displays empty cells properly
   foreach ($row as $key => $value)
@@ -304,7 +304,7 @@ HTML;
 }
 
 // Function to figure out which record to display
-function get_id()
+function get_id(mysqli $link)
 {
   // See if we are being directed to a particular record
   if (isset($_GET['ID']))
@@ -314,12 +314,12 @@ function get_id()
   $query  = "SELECT metadataID FROM metadata " .
             "ORDER BY updateTime DESC " .
             "LIMIT 1 ";
-  $result = mysql_query($query)
-      or die("Query failed : $query<br />\n" . mysql_error());
+  $result = mysqli_query($link, $query)
+      or die("Query failed : $query<br />\n" . mysqli_error($link));
 
-  if (mysql_num_rows($result) == 1)
+  if (mysqli_num_rows($result) == 1)
   {
-    list($metadataID) = mysql_fetch_array($result);
+    list($metadataID) = mysqli_fetch_array($result);
     return( $metadataID );
   }
 
@@ -347,7 +347,7 @@ HTML;
 }
 
 // Function to edit a record
-function edit_record()
+function edit_record(mysqli $link)
 {
   // Get the record we need to edit
   if ( isset( $_POST['edit'] ) )
@@ -370,10 +370,10 @@ function edit_record()
             "status " .
             "FROM metadata " .
             "WHERE metadataID = $metadataID ";
-  $result = mysql_query($query) 
-            or die("Query failed : $query<br />\n" . mysql_error());
+  $result = mysqli_query($link, $query) 
+            or die("Query failed : $query<br />\n" . mysqli_error($link));
 
-  $row = mysql_fetch_array($result);
+  $row = mysqli_fetch_array($result);
 
 
   $institution         = html_entity_decode( stripslashes( $row['institution'] ) );
@@ -477,7 +477,7 @@ HTML;
 }
 
 // Function to display the instance's login information
-function login_info()
+function login_info(mysqli $link)
 {
   // Get the record we need to edit
   if ( isset( $_POST['metadataID'] ) )
@@ -495,8 +495,8 @@ function login_info()
             "secure_user, secure_pw " .
             "FROM metadata " .
             "WHERE metadataID = $metadataID ";
-  $result = mysql_query($query) 
-            or die("Query failed : $query<br />\n" . mysql_error());
+  $result = mysqli_query($link, $query) 
+            or die("Query failed : $query<br />\n" . mysqli_error($link));
 
   list( $institution,
         $inst_abbrev,
@@ -508,7 +508,7 @@ function login_info()
         $admin_email,
         $admin_pw,
         $new_secureuser,
-        $new_securepw )   = mysql_fetch_array( $result );
+        $new_securepw )   = mysqli_fetch_array( $result );
 
   $new_grantsfile = $new_dbname . '_grants.sql';
 

@@ -1,0 +1,77 @@
+<?php
+/*  Database and other configuration information - Required!!  
+ -- Configure the Variables Below --
+
+*/
+
+$org_name           = '{{ org_name }} Portal';
+$org_site           = '{{ ansible_fqdn }}/uslims3_newlims';
+$site_author        = '{{ site_author }}';
+$site_keywords      = '{{ site_keywords }}';
+                      # The website keywords (meta tag)
+$site_desc          = '{{ newlims_site_desc }}'; # Site description
+
+$admin              = '{{ lims_admin }}';
+$admin_phone        = 'Office: {{ admin_phone }} <br />';
+$admin_email        = '{{ admin_email }}';
+
+$dbusername         = '{{ us3_db_user }}';  # the name of the MySQL user
+$dbpasswd           = '{{ us3_db_pass }}';  # the password for the MySQL user
+$dbname             = '{{ us3_db_name }}';  # the name of the database
+$dbhost             = 'localhost'; # the host on which MySQL runs, generally localhost
+
+// Global DB
+$globaldbuser       = '{{ gbl_db_user }}';  # the name of the MySQL user
+$globaldbpasswd     = '{{ gbl_db_pass }}';  # the password for the MySQL user
+$globaldbname       = '{{ gbl_db_name }}';  # the name of the database
+$globaldbhost       = 'localhost'; # the host on which MySQL runs, generally localhost
+
+$ipaddr             = '{{ ipaddr_ext }}'; # the external IP address of the host machine
+$udpport            = {{ udpport }}; # the port to send udp messages to
+$svcport            = {{ svcport }};  # the port for GFAC/Airavata services
+$uses_thrift        = {{ uses_thrift }};  # flags use of Thrift rather than Gfac
+$thr_clust_excls    = array( '{{ thr_clust_excls }}' );           # Never uses Thrift
+$thr_clust_incls    = array( '{{ thr_clust_incls }}' );             # Always uses Thrift
+
+$top_image          = '#';  # name of the logo to use
+$top_banner         = 'images/#';  # name of the banner at the top
+
+$full_path          = '{{ www_newlims }}/';  # Location of the system code
+$data_dir           = '{{ www_newlims }}/data/'; # Full path
+$dest_path          = '{{ www_uslims }}/';  # Where new databases go
+$output_dir         = '{{ output_dir }}'; # Where db creation files will go
+$class_dir          = '{{ www_common }}/{{ class_dir }}/';        # Production class path
+$sql_dir            = '{{ sql_dir }}'; # Where the sql script files are
+$disclaimer_file    = ''; # the name of a text file with disclaimer info
+
+// Dates
+$time_zone	   = '{{ time_zone }}'; 
+date_default_timezone_set( '{{ time_zone }}' );
+$last_update        = '2017/10/13'; # the date the website was last updated
+$copyright_date     = '2017'; # copyright date
+$current_year       = date( 'Y' );
+
+//////////// End of user specific configuration
+
+// ensure a trailing slash
+if ( $data_dir[strlen($data_dir) - 1] != '/' )
+  $data_dir .= '/';
+
+if ( $output_dir[strlen($output_dir) - 1] != '/' )
+  $output_dir .= '/';
+
+if ( $sql_dir[strlen($sql_dir) - 1] != '/' )
+  $sql_dir .= '/';
+
+/* Define our file paths */
+if ( ! defined('HOME_DIR') ) 
+{
+  define('HOME_DIR', $full_path );
+}
+
+if ( ! defined('DEBUG') ) 
+{
+  define('DEBUG', false );
+}
+
+?>

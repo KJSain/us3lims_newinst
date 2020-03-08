@@ -38,7 +38,7 @@ include 'header.php';
 
 <?php
 // Display a table
-$table = create_table();
+$table = create_table($link);
 echo $table;
 
 $_SESSION['print_title'] = "LIMS v3 Metadata";
@@ -52,13 +52,13 @@ include 'footer.php';
 exit();
 
 // Function to display a table of all records
-function create_table()
+function create_table(mysqli $link)
 {
   $query  = "SELECT metadataID, institution, admin_fname, admin_lname, updateTime " .
             "FROM metadata " .
             "ORDER BY updateTime DESC ";
-  $result = mysql_query($query) 
-            or die("Query failed : $query<br />\n" . mysql_error());
+  $result = mysqli_query($link, $query) 
+            or die("Query failed : $query<br />\n" . mysqli_error($link));
 
   $table = <<<HTML
   <form action="{$_SERVER['PHP_SELF']}" method="post" >
@@ -81,7 +81,7 @@ function create_table()
     <tbody>
 HTML;
 
-  while ( $row = mysql_fetch_array($result) )
+  while ( $row = mysqli_fetch_array($result) )
   {
     foreach ($row as $key => $value)
     {
