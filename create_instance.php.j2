@@ -37,7 +37,7 @@ include 'header.php';
 
 <?php
   if ( isset( $_POST['step_2'] ) )
-    do_step2($link);
+    do_step2($dest_path, $link);
 
   else if ( isset( $_SESSION['metadataID'] ) )
     do_step1($link);
@@ -76,7 +76,7 @@ echo "MetadataID = $metadataID<br />";
   list( $status ) = mysqli_fetch_array( $result );
   if ( $status == 'completed' )
   {
-    error "Error: this database has already been set up.";  
+    echo "Error: this database has already been set up.";  
     return false;
   }
 echo "Metadata status = $status<br />";
@@ -202,7 +202,7 @@ TEXT;
 HTML;
 }
 
-function do_step2(mysqli $link)
+function do_step2($dest_path, mysqli $link)
 {
   $metadataID = $_POST['metadataID'];
 

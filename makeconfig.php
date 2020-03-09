@@ -134,7 +134,7 @@ $text = <<<TEXT
 \$disclaimer_file    = ''; # the name of a text file with disclaimer info
 
 // Dates
-date_default_timezone_set( '${timezone}' );
+date_default_timezone_set( '${time_zone}' );
 \$last_update        = '$today'; # the date the website was last updated
 \$copyright_date     = '$year'; # copyright date
 \$current_year       = date( 'Y' );
