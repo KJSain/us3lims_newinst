@@ -91,7 +91,7 @@ function do_update(mysqli $link)
 
     $query .= "WHERE personID = $ID ";
     
-    mysqli_query($query, $link)
+    mysqli_query($link, $query)
       or die("Query failed : $query<br />\n" . mysqli_error($link));
 
     // Now update the session variables 
